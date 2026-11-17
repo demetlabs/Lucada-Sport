@@ -444,9 +444,10 @@ const firebaseConfig = {
   appId: "1:530257056176:web:5bf7c7b6f6d512b6948675"
 };
 /* UID de cada administrador (Firebase > Authentication > Usuarios). Deben ser los mismos que pongas en las reglas. */
-const ADMINS = ["nKGx9GWak7SU7F5yJ2NCHMYk17C3", "PON_AQUI_EL_UID_DE_TU_HERMANO"];
+const ADMINS = ["nKGx9GWak7SU7F5yJ2NCHMYk17C3"];
 /* Cloudinary (gratis) para guardar las fotos. Ver la guía para crear el "upload preset" sin firma. */
 const CLOUDINARY = { cloudName: "qxnnvs2n", uploadPreset: "lucada_web", folder: "daluf" };
+
 const MAX_FOTOS = 10;
 const TALLAS_BASE = ['XS','S','M','L','XL','XXL'];
 const CATS_BASE = ['Leggings','Shorts','Buzos','Polos y tops'];
@@ -570,8 +571,12 @@ const errAuth = c => ({
   'auth/invalid-email':'Ese correo no es válido.', 'auth/too-many-requests':'Demasiados intentos. Espera unos minutos y vuelve a probar.',
   'auth/network-request-failed':'Sin conexión a internet.', 'auth/popup-closed-by-user':'', 'auth/cancelled-popup-request':'',
   'auth/unauthorized-domain':'Este sitio no está autorizado en Firebase. Agrega el dominio en Authentication > Configuración > Dominios autorizados.',
-  'auth/operation-not-allowed':'Este método de inicio de sesión no está activado en Firebase.'
-}[c] ?? 'No se pudo iniciar sesión. Inténtalo de nuevo.');
+  'auth/operation-not-allowed':'Este método de inicio de sesión no está activado en Firebase.',
+  'auth/configuration-not-found':'El inicio de sesión no está activado en Firebase (Authentication > Método de acceso).',
+  'auth/internal-error':'Error interno de Firebase. Revisa que Google esté activado en Método de acceso y vuelve a intentar.',
+  'auth/popup-blocked':'El navegador bloqueó la ventana de Google. Permite las ventanas emergentes para este sitio.',
+  'auth/invalid-api-key':'La clave de Firebase no es válida para este sitio.'
+}[c] ?? ('No se pudo iniciar sesión. Código del error: ' + (c || 'desconocido')));
 $('#fLogin').addEventListener('submit', async e => {
   e.preventDefault();
   const em = $('#lEmail').value.trim(), pw = $('#lPass').value;
@@ -587,7 +592,7 @@ $('#btnGoogle').onclick = async () => {
   try { await AU.signInWithPopup(auth, p); }
   catch (er) {
     if (er.code === 'auth/popup-blocked' || er.code === 'auth/operation-not-supported-in-this-environment') { try { await AU.signInWithRedirect(auth, p); } catch (e2) { mostrarErr(errAuth(e2.code)); } }
-    else mostrarErr(errAuth(er.code));
+    else { console.error(er); mostrarErr(/requests-from-referer/.test(er.code||'') ? 'La clave de Firebase tiene restricciones de dominio. Agrega este sitio en Google Cloud > Credenciales. (' + er.code + ')' : errAuth(er.code)); }
   }
 };
 const salir = () => AU.signOut(auth);
