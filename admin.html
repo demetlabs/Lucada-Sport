@@ -201,6 +201,30 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (max-width:420px){ .row2{grid-template-columns:1fr} .photos{grid-template-columns:repeat(2,minmax(0,1fr))} }
 
+/* ===== fotos por color ===== */
+.colrows{display:flex;flex-direction:column;gap:10px}
+.colrow{border:1.5px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:10px;background:#fbfcfe}
+.colrow-h{display:flex;align-items:center;gap:10px}
+.colrow-h i{width:28px;height:28px;border-radius:50%;border:1.5px solid rgba(10,22,51,.2);flex:none}
+.colrow-h b{font-size:15px}
+.colrow-h small{color:var(--mut);font-weight:600;font-size:13px;flex:1}
+.colrow-h button{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--mut)}
+.cstrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.cph{position:relative;flex:none;width:84px}
+.cph .im{position:relative;width:84px;height:105px;border-radius:12px;overflow:hidden;background:#e9eef7}
+.cph .im img{width:100%;height:100%;object-fit:cover}
+.cph .up{position:absolute;inset:0;background:rgba(7,22,52,.6);color:#fff;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;text-align:center}
+.cph .up.err{background:rgba(160,20,40,.75)}
+.cph .pb{width:80%;height:5px;border-radius:9px;background:rgba(255,255,255,.3);overflow:hidden}
+.cph .pb i{display:block;height:100%;background:#fff;width:0}
+.cph .acts{display:flex;justify-content:space-between;margin-top:4px}
+.cph .acts button{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#edf1f8;color:var(--ink)}
+.cph .acts button:disabled{opacity:.35}
+.cph .acts button.del{color:var(--bad)}
+.cph .acts .ic{width:15px;height:15px}
+.cph .badge{position:absolute;left:5px;top:5px;background:var(--navy-900);color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:6px}
+.cadd{flex:none;width:84px;height:105px;border-radius:12px;border:1.5px dashed #b8c4da;background:#fff;color:var(--blue);font-weight:700;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center}
+.cadd .ic{width:22px;height:22px}
 /* ===== funciones nuevas ===== */
 .qf{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;margin:0 -2px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .qf::-webkit-scrollbar{display:none}
@@ -457,7 +481,7 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
   </div>
   <form class="sh-body" id="fProd" novalidate>
     <div class="box">
-      <h4><svg class="ic"><use href="#i-img"/></svg>Fotos <small id="phCount">0 de 10</small></h4>
+      <h4><svg class="ic"><use href="#i-img"/></svg>Fotos generales <small id="phCount">0 de 10</small></h4>
       <div class="photos" id="phGrid"></div>
       <div class="ph-tools">
         <button type="button" class="btn btn-sm btn-line" id="btnUrl"><svg class="ic"><use href="#i-link"/></svg>Agregar con enlace</button>
@@ -527,9 +551,9 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
     </div>
 
     <div class="box">
-      <h4>Colores <small>opcional</small></h4>
-      <p class="sec-sub">Elige los colores en que viene esta prenda. El cliente lo elige en la tienda y sale en su pedido de WhatsApp.</p>
-      <div class="colsel" id="pColSel"></div>
+      <h4>Colores y sus fotos <small>opcional</small></h4>
+      <p class="sec-sub">Elige los colores en que viene esta prenda y sube las fotos de cada uno. En la tienda, cuando el cliente toca un color, se muestran sus fotos. Si un color no tiene fotos, se ven las fotos generales de arriba.</p>
+      <div class="colrows" id="pColSel"></div>
       <div class="cols" id="pColores"></div>
       <div class="colnew">
         <label class="sr" for="pColNom">Nombre del color</label>
@@ -563,6 +587,7 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
 
 <input type="file" id="fileMulti" accept="image/*" multiple hidden>
 <input type="file" id="fileOne" accept="image/*" hidden>
+<input type="file" id="fileCol" accept="image/*" multiple hidden>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="dlgRoot"></div>
 
@@ -751,6 +776,10 @@ function generoDe(p){
 const agotadasDe = p => Array.isArray(p.tallasAgotadas) ? p.tallasAgotadas : [];
 const sinStock = p => { const t = tallasDe(p); return t.length > 0 && t.every(x => agotadasDe(p).includes(x)); };
 const coloresDe = p => (Array.isArray(p.colores) ? p.colores : []).filter(c => c && c.n);
+const fotosColorDe = c => (Array.isArray(c.fotos) ? c.fotos : []).filter(u => typeof u === 'string' && /^https?:\/\//i.test(u));
+/* foto para la lista: las generales o, si no hay, las de los colores */
+const fotosLista = p => { const f = fotosDe(p); return f.length ? f : [...new Set(coloresDe(p).flatMap(fotosColorDe))]; };
+const MAX_FOTOS_COLOR = 8;
 const enOferta = p => Number(p.precioAnterior || 0) > Number(p.precio) || p.esOferta === 'si';
 const enlaceDe = id => new URL('./?p=' + encodeURIComponent(id), location.href).href;
 const PRESET_COL = [['Negro','#111111'],['Blanco','#ffffff'],['Gris','#8e949e'],['Melange','#b9bcc2'],['Azul marino','#14213d'],['Azul','#1f5fd1'],['Celeste','#8cc8f0'],['Beige','#d8c3a5'],['Marrón','#6b4226'],['Rosado','#f29bb8'],['Rojo','#c8102e'],['Vino','#7b1e3a'],['Verde','#2f7d4a'],['Verde militar','#5b6b3a'],['Morado','#6b3fa0'],['Lila','#c3a6e0'],['Amarillo','#f2c230'],['Naranja','#f07a24']];
@@ -842,7 +871,7 @@ const QF = [
   ['tallas', 'Con tallas agotadas', p => agotadasDe(p).length > 0 && !sinStock(p)],
   ['oferta', 'En oferta', p => enOferta(p)],
   ['nuevos', 'Nuevos', p => !!p.nuevo],
-  ['sinfoto', 'Sin foto', p => !fotosDe(p).length]
+  ['sinfoto', 'Sin foto', p => !fotosLista(p).length]
 ];
 function pintarQF(){
   $('#qf').innerHTML = QF.map(([k, t, f]) => { const n = productos.filter(f).length; return (k === 'todos' || n || k === qf) ? `<button type="button" data-qf="${k}" class="${k === qf ? 'on' : ''}" aria-pressed="${k === qf}">${t}<b>${n}</b></button>` : ''; }).join('');
@@ -859,7 +888,7 @@ function pintarLista(){
   if (!productos.length) { $('#pList').innerHTML = '<div class="empty">Todavía no hay productos.<br><br><button class="btn btn-navy" data-new>Crear el primero</button></div>'; return; }
   if (!l.length) { $('#pList').innerHTML = '<div class="empty">No hay productos con esos filtros.</div>'; return; }
   $('#pList').innerHTML = l.map(p => {
-    const fo = fotosDe(p), an = Number(p.precioAnterior || 0), oc = p.visible === false, ag = agotadasDe(p), out = sinStock(p), co = coloresDe(p);
+    const fo = fotosLista(p), an = Number(p.precioAnterior || 0), oc = p.visible === false, ag = agotadasDe(p), out = sinStock(p), co = coloresDe(p);
     return `<article class="pcard${out || oc ? ' dim' : ''}">
       <div class="ph">${fo[0] ? `<img src="${esc(fo[0])}" alt="" loading="lazy">` : ''}
         <div class="tag">${oc ? '<span class="pill hid">Oculto</span>' : ''}${out ? '<span class="pill out">Agotado</span>' : ''}${!fo.length ? '<span class="pill warn">Sin foto</span>' : ''}${enOferta(p) ? '<span class="pill off">Oferta</span>' : ''}${p.nuevo ? '<span class="pill new">Nuevo</span>' : ''}<span class="pill">${generoDe(p) === 'mujer' ? 'Mujer' : generoDe(p) === 'hombre' ? 'Hombre' : 'Unisex'}</span></div>
@@ -935,7 +964,7 @@ function abrirEditor(p, esCopia = false){
   $('#shTitle').textContent = esCopia ? 'Duplicar producto' : p ? 'Editar producto' : 'Nuevo producto';
   $('#btnDel').hidden = !edit; $('#editActs').hidden = !edit;
   agotadas = p ? agotadasDe(p).filter(t => tallasDe(p).includes(t)) : [];
-  colores = p ? coloresDe(p).map(c => ({n: c.n, h: c.h})) : [];
+  colores = p ? coloresDe(p).map(c => ({n: c.n, h: c.h, fotos: fotosColorDe(c).map(url => ({url, estado: 'ok'}))})) : [];
   $('#pNuevo').checked = p ? !!p.nuevo : true;
   $('#pNombre').value = p?.nombre || '';
   $('#pDesc').value = p?.descripcion || '';
@@ -956,7 +985,7 @@ function abrirEditor(p, esCopia = false){
   setTimeout(() => (p ? $('#shClose') : $('#pNombre')).focus({preventScroll: true}), 320);
 }
 async function cerrarEditor(forzar){
-  if (!forzar && fotos.some(f => f.estado === 'subiendo')) { toast('Espera a que terminen de subir las fotos'); return; }
+  if (!forzar && (fotos.some(f => f.estado === 'subiendo') || colores.some(c => c.fotos.some(f => f.estado === 'subiendo')))) { toast('Espera a que terminen de subir las fotos'); return; }
   if (!forzar && sucio && !(await dialogo({titulo: '¿Salir sin guardar?', texto: 'Perderás los cambios que hiciste en este producto.', ok: 'Salir sin guardar', peligro: true}))) return;
   $('#sheet').classList.remove('open'); $('#shBg').classList.remove('open'); $('#sheet').setAttribute('aria-hidden', 'true');
   document.body.style.overflow = ''; edit = null;
@@ -989,22 +1018,61 @@ $('#btnTodoAgot').onclick = () => { agotadas = [...tallas]; sucio = true; pintar
 
 /* colores */
 function pintarColores(){
-  $('#pColSel').innerHTML = colores.length ? colores.map((c, i) => `<span><i style="background:${esc(c.h)}"></i>${esc(c.n)}<button type="button" data-crm="${i}" aria-label="Quitar ${esc(c.n)}"><svg class="ic"><use href="#i-x"/></svg></button></span>`).join('') : '<span class="hint" style="background:none;font-weight:500;color:var(--mut)">Sin colores. Toca uno para agregarlo.</span>';
+  $('#pColSel').innerHTML = colores.length ? colores.map((c, i) => `<div class="colrow">
+      <div class="colrow-h"><i style="background:${esc(c.h)}"></i><b>${esc(c.n)}</b><small>${c.fotos.length ? `${c.fotos.length} ${c.fotos.length === 1 ? 'foto' : 'fotos'}` : 'Sin fotos: usa las generales'}</small>
+        <button type="button" data-crm="${i}" aria-label="Quitar el color ${esc(c.n)}" title="Quitar color"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+      <div class="cstrip">${c.fotos.map((f, k) => `<div class="cph"><div class="im"><img src="${esc(f.preview || f.url)}" alt="${esc(c.n)}, foto ${k + 1}">${k === 0 ? '<span class="badge">1ª</span>' : ''}
+          ${f.estado === 'subiendo' ? `<div class="up"><span>Subiendo…</span><div class="pb"><i data-pk="${f.key}" style="width:${Math.round((f.prog || 0) * 100)}%"></i></div></div>` : ''}
+          ${f.estado === 'error' ? `<div class="up err"><span>No se subió</span><button type="button" class="btn btn-sm btn-chrome" data-cretry="${i}:${k}" style="min-height:28px;padding:0 8px;font-size:11px">Reintentar</button></div>` : ''}</div>
+        <div class="acts"><button type="button" data-cmv="${i}:${k}" aria-label="Mover foto ${k + 1} de ${esc(c.n)} a la izquierda" ${k === 0 ? 'disabled' : ''}><svg class="ic"><use href="#i-left"/></svg></button><button type="button" class="del" data-cfrm="${i}:${k}" aria-label="Quitar foto ${k + 1} de ${esc(c.n)}"><svg class="ic"><use href="#i-trash"/></svg></button></div></div>`).join('')}
+        ${c.fotos.length < MAX_FOTOS_COLOR ? `<button type="button" class="cadd" data-cadd="${i}"><svg class="ic"><use href="#i-cam"/></svg>Fotos de ${esc(c.n)}</button>` : ''}</div>
+    </div>`).join('') : '<span class="hint">Sin colores. Toca uno de la lista para agregarlo.</span>';
   $('#pColores').innerHTML = PRESET_COL.map(([n, h]) => { const on = colores.some(c => sameText(c.n, n)); return `<button type="button" class="colc ${on ? 'on' : ''}" data-col="${esc(n)}" data-hex="${h}" aria-pressed="${on}"><i style="background:${h}"></i>${esc(n)}</button>`; }).join('');
 }
 $('#pColores').addEventListener('click', e => {
   const b = e.target.closest('[data-col]'); if (!b) return;
   const n = b.dataset.col;
-  colores = colores.some(c => sameText(c.n, n)) ? colores.filter(c => !sameText(c.n, n)) : [...colores, {n, h: b.dataset.hex}];
+  const ya = colores.find(c => sameText(c.n, n));
+  if (ya) return quitarColor(colores.indexOf(ya));
+  colores.push({n, h: b.dataset.hex, fotos: []});
   sucio = true; pintarColores();
 });
-$('#pColSel').addEventListener('click', e => { const b = e.target.closest('[data-crm]'); if (!b) return; colores.splice(+b.dataset.crm, 1); sucio = true; pintarColores(); });
+async function quitarColor(i){
+  const c = colores[i]; if (!c) return;
+  if (c.fotos.some(f => f.estado === 'subiendo')) return toast('Espera a que terminen de subir sus fotos');
+  if (c.fotos.length && !(await dialogo({titulo: `¿Quitar el color ${c.n}?`, texto: `También se quitan sus ${c.fotos.length} ${c.fotos.length === 1 ? 'foto' : 'fotos'} cuando guardes.`, ok: 'Quitar', peligro: true}))) return;
+  colores.splice(i, 1); sucio = true; pintarColores();
+}
+let colorObjetivo = -1;
+$('#pColSel').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.crm !== undefined) return quitarColor(+b.dataset.crm);
+  if (b.dataset.cadd !== undefined) { if (!cldListo()) return toast('Primero configura Cloudinary', 'bad'); colorObjetivo = +b.dataset.cadd; $('#fileCol').click(); return; }
+  const par = v => v.split(':').map(Number);
+  if (b.dataset.cmv !== undefined) { const [i, k] = par(b.dataset.cmv), l = colores[i].fotos; [l[k - 1], l[k]] = [l[k], l[k - 1]]; }
+  else if (b.dataset.cfrm !== undefined) {
+    const [i, k] = par(b.dataset.cfrm), f = colores[i].fotos[k];
+    if (f.estado === 'subiendo') return toast('Espera a que termine de subir');
+    colores[i].fotos.splice(k, 1); toast('Foto quitada');
+  }
+  else if (b.dataset.cretry !== undefined) { const [i, k] = par(b.dataset.cretry), f = colores[i].fotos[k]; if (f.file) procesar(f, pintarColores); return; }
+  else return;
+  sucio = true; pintarColores();
+});
+$('#fileCol').addEventListener('change', e => {
+  const c = colores[colorObjetivo], files = [...e.target.files].filter(f => /^image\//.test(f.type)); e.target.value = '';
+  if (!c || !files.length) return;
+  const libres = MAX_FOTOS_COLOR - c.fotos.length;
+  if (files.length > libres) toast(`Máximo ${MAX_FOTOS_COLOR} fotos por color. Se agregarán ${libres}.`);
+  files.slice(0, libres).forEach(file => { const f = {file, preview: URL.createObjectURL(file)}; c.fotos.push(f); procesar(f, pintarColores); });
+  sucio = true;
+});
 const agregarColor = () => {
   const n = norm($('#pColNom').value); if (!n) return $('#pColNom').focus();
   const nn = n.charAt(0).toUpperCase() + n.slice(1);
   if (colores.some(c => sameText(c.n, nn))) return toast('Ese color ya está');
   if (colores.length >= 16) return toast('Máximo 16 colores');
-  colores.push({n: nn, h: $('#pColHex').value}); $('#pColNom').value = ''; sucio = true; pintarColores();
+  colores.push({n: nn, h: $('#pColHex').value, fotos: []}); $('#pColNom').value = ''; sucio = true; pintarColores();
 };
 $('#btnColor').onclick = agregarColor;
 $('#pColNom').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); agregarColor(); } });
@@ -1058,13 +1126,13 @@ $('#phGrid').addEventListener('click', async e => {
   else return;
   sucio = true; pintarFotos();
 });
-function procesar(f){
-  f.estado = 'subiendo'; f.prog = 0; pintarFotos();
+function procesar(f, repintar = pintarFotos){
+  f.estado = 'subiendo'; f.prog = 0;
   f.key = f.key || Math.random().toString(36).slice(2);
-  pintarFotos();
-  subirFoto(f.file, p => { f.prog = p; const bar = document.querySelector(`#phGrid [data-pk="${f.key}"]`); if (bar) bar.style.width = Math.round(p * 100) + '%'; })
-    .then(url => { f.url = url; f.estado = 'ok'; delete f.file; if (f.preview) { URL.revokeObjectURL(f.preview); delete f.preview; } pintarFotos(); })
-    .catch(er => { console.error(er); f.estado = 'error'; pintarFotos(); toast('Una foto no se pudo subir: ' + er.message, 'bad'); });
+  repintar();
+  subirFoto(f.file, p => { f.prog = p; const bar = document.querySelector(`[data-pk="${f.key}"]`); if (bar) bar.style.width = Math.round(p * 100) + '%'; })
+    .then(url => { f.url = url; f.estado = 'ok'; delete f.file; if (f.preview) { URL.revokeObjectURL(f.preview); delete f.preview; } repintar(); })
+    .catch(er => { console.error(er); f.estado = 'error'; repintar(); toast('Una foto no se pudo subir: ' + er.message, 'bad'); });
 }
 function nuevasFotos(files, idx){
   files = [...files].filter(f => /^image\//.test(f.type));
@@ -1097,7 +1165,10 @@ $('#shSave').onclick = async () => {
   if (!(precio > 0)) return $('#pPrecio').focus(), toast('Falta el precio', 'bad');
   if (!tallas.length) return toast('Elige al menos una talla', 'bad');
   if (fotos.some(f => f.estado === 'subiendo')) return toast('Espera a que terminen de subir las fotos');
-  if (!fotos.some(f => f.estado === 'ok' && f.url)) { $('#phGrid').scrollIntoView({behavior: 'smooth', block: 'center'}); return toast('Agrega al menos una foto del producto', 'bad'); }
+  const fc = colores.flatMap(c => c.fotos);
+  if (fc.some(f => f.estado === 'subiendo')) return toast('Espera a que terminen de subir las fotos de los colores');
+  if (fc.some(f => f.estado === 'error')) { $('#pColSel').scrollIntoView({behavior: 'smooth', block: 'center'}); return toast('Hay fotos de colores que no se subieron: reintenta o quítalas', 'bad'); }
+  if (!fotos.some(f => f.estado === 'ok' && f.url) && !fc.some(f => f.estado === 'ok' && f.url)) { $('#phGrid').scrollIntoView({behavior: 'smooth', block: 'center'}); return toast('Agrega al menos una foto del producto', 'bad'); }
   if (antes > 0 && antes <= precio) { $('#pAntes').focus(); return toast('El "precio antes" debe ser mayor que el precio actual', 'bad'); }
   if (fotos.some(f => f.estado === 'error')) return toast('Hay fotos que no se subieron: reintenta o quítalas', 'bad');
   if (categoria === '__nueva') {
@@ -1110,7 +1181,7 @@ $('#shSave').onclick = async () => {
     genero: $('#pGen').value, categoria, precio: Math.round(precio * 100) / 100,
     precioAnterior: antes > 0 ? Math.round(antes * 100) / 100 : 0,
     esOferta: $('#pOferta').checked ? 'si' : 'no', tallas: [...tallas],
-    tallasAgotadas: agotadas.filter(t => tallas.includes(t)), colores: colores.map(c => ({n: c.n, h: c.h})), nuevo: $('#pNuevo').checked,
+    tallasAgotadas: agotadas.filter(t => tallas.includes(t)), colores: colores.map(c => ({n: c.n, h: c.h, fotos: c.fotos.filter(f => f.url && f.estado === 'ok').map(f => f.url)})), nuevo: $('#pNuevo').checked,
     imagenes: fotos.filter(f => f.url).map(f => f.url), visible: $('#pVisible').checked, actualizado: F.serverTimestamp()
   };
   try {
