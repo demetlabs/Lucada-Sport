@@ -201,6 +201,20 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (max-width:420px){ .row2{grid-template-columns:1fr} .photos{grid-template-columns:repeat(2,minmax(0,1fr))} }
 
+[hidden]{display:none!important}
+/* ===== guía de tallas por producto ===== */
+.dlg{grid-template-columns:minmax(0,1fr)}
+.dlg-card{justify-self:center;min-width:0;max-height:calc(100dvh - 40px);overflow-y:auto}
+@media (max-width:560px){ .crow{flex-wrap:wrap} .crow .nm{flex:1 1 100%} }
+.gwrap{overflow-x:auto;margin:0 -4px}
+#pGt th{white-space:normal;line-height:1.15;vertical-align:bottom;padding-bottom:4px}
+#pGt td:first-child{font-weight:800;text-align:center;font-size:15px;width:52px}
+#pGt input{min-width:56px}
+.medsel{display:flex;flex-wrap:wrap;gap:8px}
+.medsel button{min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:14px;color:var(--mut)}
+.medsel button.on{background:var(--navy-900);border-color:var(--navy-900);color:#fff}
+.medsel button.on::before{content:"✓ "}
+.crow .nm small.med{display:block;color:var(--blue);font-weight:600}
 /* ===== fotos por color ===== */
 .colrows{display:flex;flex-direction:column;gap:10px}
 .colrow{border:1.5px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;gap:10px;background:#fbfcfe}
@@ -306,6 +320,7 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
     <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
     <symbol id="i-top" viewBox="0 0 24 24"><path d="M5 4h14M12 20V9M7 13l5-5 5 5"/></symbol>
     <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
+    <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></symbol>
     <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
   </defs>
 </svg>
@@ -426,20 +441,16 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
         <div class="f"><label for="bnT">Título</label><input id="bnT" type="text" maxlength="60" placeholder="Ej.: Black Friday: hasta 30% de descuento"></div>
         <div class="f"><label for="bnX">Texto corto</label><input id="bnX" type="text" maxlength="120" placeholder="Ej.: Solo este fin de semana. Envíos a todo el Perú."></div>
         <div class="row2">
-          <div class="f"><label for="bnB">Texto del botón</label><input id="bnB" type="text" maxlength="24" placeholder="Ver ofertas"></div>
+          <div class="f"><label for="bnB">Texto del botón</label><input id="bnB" type="text" maxlength="24" placeholder="Ver ofertas"><span class="hint">Déjalo vacío para no mostrar botón.</span></div>
           <div class="f"><label for="bnD">El botón lleva a</label><select id="bnD"></select></div>
         </div>
         <button class="btn btn-navy" type="submit" id="btnBn">Guardar banner</button>
       </form>
 
-      <form class="box" id="fGt" style="margin-top:14px">
-        <h4>Guía de tallas <small>medidas en cm</small></h4>
-        <p class="sec-sub">Se muestra con el botón "Guía de tallas" dentro de cada producto. Deja la tabla vacía para no mostrarla.</p>
-        <table class="gtab"><thead><tr><th>Talla</th><th>Cintura</th><th>Cadera</th><th>Largo</th><th></th></tr></thead><tbody id="gtRows"></tbody></table>
-        <div class="mini-acts"><button type="button" class="btn btn-sm btn-line" id="gtAdd"><svg class="ic"><use href="#i-plus"/></svg>Agregar fila</button><button type="button" class="btn btn-sm btn-line" id="gtFill">Llenar con XS a XXL</button></div>
-        <div class="f"><label for="gtNota">Nota (opcional)</label><input id="gtNota" type="text" maxlength="140" placeholder="Ej.: Si estás entre dos tallas, elige la mayor."></div>
-        <button class="btn btn-navy" type="submit" id="btnGt">Guardar guía de tallas</button>
-      </form>
+      <div class="box" style="margin-top:14px">
+        <h4><svg class="ic"><use href="#i-ruler"/></svg>Guía de tallas</h4>
+        <p class="sec-sub" style="margin:0">Ahora la guía se llena dentro de cada producto. Las medidas que pide cada categoría (pecho, cintura, largo…) se eligen en la pestaña <b>Categorías</b>.</p>
+      </div>
 
       <form class="box" id="fPay" style="margin-top:14px">
         <h4>Pagos y envíos</h4>
@@ -548,6 +559,18 @@ select.sel{min-height:46px;border-radius:14px;border:1.5px solid var(--line);bac
         <div class="chips" id="pAgot"></div>
         <div class="mini-acts"><button type="button" class="btn btn-sm btn-line" id="btnTodoDisp">Todo disponible</button><button type="button" class="btn btn-sm btn-line" id="btnTodoAgot">Todo agotado</button></div>
       </div>
+    </div>
+
+    <div class="box">
+      <h4><svg class="ic"><use href="#i-ruler"/></svg>Guía de tallas <small>en cm · opcional</small></h4>
+      <p class="sec-sub" id="gtInfo"></p>
+      <div class="gwrap"><table class="gtab" id="pGt"></table></div>
+      <div class="mini-acts">
+        <button type="button" class="btn btn-sm btn-line" id="gtMed"><svg class="ic"><use href="#i-edit"/></svg>Cambiar medidas</button>
+        <button type="button" class="btn btn-sm btn-line" id="gtCopy"><svg class="ic"><use href="#i-copy"/></svg>Copiar de otro producto</button>
+        <button type="button" class="btn btn-sm btn-line" id="gtClear">Vaciar</button>
+      </div>
+      <div class="f"><label for="pGtNota">Nota de la guía (opcional)</label><input id="pGtNota" type="text" maxlength="140" placeholder="Ej.: Si estás entre dos tallas, elige la mayor."></div>
     </div>
 
     <div class="box">
@@ -780,6 +803,47 @@ const fotosColorDe = c => (Array.isArray(c.fotos) ? c.fotos : []).filter(u => ty
 /* foto para la lista: las generales o, si no hay, las de los colores */
 const fotosLista = p => { const f = fotosDe(p); return f.length ? f : [...new Set(coloresDe(p).flatMap(fotosColorDe))]; };
 const MAX_FOTOS_COLOR = 8;
+const MEDIDAS_OPC = ['Pecho','Busto','Cintura','Cadera','Largo','Hombro','Manga','Tiro','Entrepierna','Muslo','Basta','Ancho'];
+function medidasSugeridas(cat){
+  const c = String(cat || '').toLowerCase();
+  if (/polo|top|camis|polera|casaca|chompa|bivid|sudad|blusa|crop|chaleco|hoodie/.test(c)) return ['Pecho','Largo','Hombro','Manga'];
+  if (/short|bermuda|biker/.test(c)) return ['Cintura','Cadera','Largo'];
+  if (/legg|licra|calza|pantal|jogger|buzo|jean|falda|cader/.test(c)) return ['Cintura','Cadera','Largo','Tiro'];
+  if (/enteriz|vestido|mono|body/.test(c)) return ['Busto','Cintura','Cadera','Largo'];
+  return ['Cintura','Cadera','Largo'];
+}
+const medidasDe = cat => { const m = (ajustes.medidas || []).find(x => sameText(x.cat, cat)); return m && Array.isArray(m.campos) && m.campos.length ? m.campos : medidasSugeridas(cat); };
+const listaMedidas = (cat, campos) => [...(ajustes.medidas || []).filter(x => !sameText(x.cat, cat)), ...(campos ? [{cat, campos}] : [])];
+/* elegir qué medidas pide una categoría */
+function elegirMedidas(cat, actuales){
+  return new Promise(res => {
+    let sel = [...actuales];
+    const root = $('#dlgRoot');
+    const opciones = () => [...MEDIDAS_OPC, ...sel.filter(m => !MEDIDAS_OPC.includes(m))];
+    const pintar = () => { root.querySelector('.medsel').innerHTML = opciones().map(m => `<button type="button" data-m="${esc(m)}" class="${sel.includes(m) ? 'on' : ''}" aria-pressed="${sel.includes(m)}">${esc(m)}</button>`).join(''); };
+    root.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="mdT"><div class="dlg-card">
+      <h3 id="mdT">Medidas de ${esc(cat)}</h3>
+      <p>Elige qué medidas se llenan en la guía de tallas de los productos de esta categoría. Se muestran en este orden.</p>
+      <div class="medsel"></div>
+      <div class="inline"><label class="sr" for="mdNew">Otra medida</label><input id="mdNew" type="text" maxlength="20" placeholder="Otra medida (ej.: Contorno)" style="min-height:44px;border-radius:12px;border:1.5px solid var(--line);padding:0 12px;font-size:16px"><button type="button" class="btn btn-sm btn-line" id="mdAdd">Agregar</button></div>
+      <div class="acts"><button class="btn btn-line" data-r="0">Cancelar</button><button class="btn btn-navy" data-r="1">Guardar medidas</button></div>
+    </div></div>`;
+    pintar();
+    const add = () => { const v = norm($('#mdNew').value); if (!v) return; const n = v.charAt(0).toUpperCase() + v.slice(1); if (!sel.some(m => sameText(m, n))) sel.push(n); $('#mdNew').value = ''; pintar(); };
+    $('#mdAdd').onclick = add;
+    $('#mdNew').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); add(); } });
+    const cerrar = v => { root.innerHTML = ''; document.removeEventListener('keydown', key); res(v); };
+    const key = e => { if (e.key === 'Escape') cerrar(null); };
+    document.addEventListener('keydown', key);
+    root.querySelector('.dlg').addEventListener('click', e => {
+      const m = e.target.closest('[data-m]');
+      if (m) { const v = m.dataset.m; sel = sel.includes(v) ? sel.filter(x => x !== v) : [...sel, v]; return pintar(); }
+      const b = e.target.closest('[data-r]');
+      if (b) { if (b.dataset.r === '1' && !sel.length) return toast('Elige al menos una medida', 'bad'); cerrar(b.dataset.r === '1' ? sel : null); }
+      else if (e.target.classList.contains('dlg')) cerrar(null);
+    });
+  });
+}
 const enOferta = p => Number(p.precioAnterior || 0) > Number(p.precio) || p.esOferta === 'si';
 const enlaceDe = id => new URL('./?p=' + encodeURIComponent(id), location.href).href;
 const PRESET_COL = [['Negro','#111111'],['Blanco','#ffffff'],['Gris','#8e949e'],['Melange','#b9bcc2'],['Azul marino','#14213d'],['Azul','#1f5fd1'],['Celeste','#8cc8f0'],['Beige','#d8c3a5'],['Marrón','#6b4226'],['Rosado','#f29bb8'],['Rojo','#c8102e'],['Vino','#7b1e3a'],['Verde','#2f7d4a'],['Verde militar','#5b6b3a'],['Morado','#6b3fa0'],['Lila','#c3a6e0'],['Amarillo','#f2c230'],['Naranja','#f07a24']];
@@ -964,6 +1028,9 @@ function abrirEditor(p, esCopia = false){
   $('#shTitle').textContent = esCopia ? 'Duplicar producto' : p ? 'Editar producto' : 'Nuevo producto';
   $('#btnDel').hidden = !edit; $('#editActs').hidden = !edit;
   agotadas = p ? agotadasDe(p).filter(t => tallasDe(p).includes(t)) : [];
+  gvals = {}; medNueva = null;
+  if (p && p.guia && Array.isArray(p.guia.campos) && Array.isArray(p.guia.filas)) p.guia.filas.forEach(f => { gvals[f.t] = {}; p.guia.campos.forEach((c, k) => gvals[f.t][c] = (f.v || [])[k] || ''); });
+  $('#pGtNota').value = p?.guia?.nota || '';
   colores = p ? coloresDe(p).map(c => ({n: c.n, h: c.h, fotos: fotosColorDe(c).map(url => ({url, estado: 'ok'}))})) : [];
   $('#pNuevo').checked = p ? !!p.nuevo : true;
   $('#pNombre').value = p?.nombre || '';
@@ -999,12 +1066,13 @@ function pintarCatSelect(sel){
   if (sel && !l.some(c => sameText(c, sel))) l.push(sel);
   $('#pCat').innerHTML = l.map(c => `<option ${sameText(c, sel) ? 'selected' : ''}>${esc(c)}</option>`).join('') + '<option value="__nueva">+ Nueva categoría…</option>';
 }
-$('#pCat').addEventListener('change', e => { const n = e.target.value === '__nueva'; $('#newCatBox').hidden = !n; if (n) $('#pCatNew').focus(); });
+$('#pCat').addEventListener('change', e => { const n = e.target.value === '__nueva'; $('#newCatBox').hidden = !n; if (n) $('#pCatNew').focus(); pintarGuiaProd(); });
 
 function pintarTallas(){
   const todas = [...TALLAS_BASE, ...tallas.filter(t => !TALLAS_BASE.includes(t))];
   $('#pTallas').innerHTML = todas.map(t => `<button type="button" class="chip ${tallas.includes(t) ? 'on' : ''}" data-t="${esc(t)}" aria-pressed="${tallas.includes(t)}">${esc(t)}</button>`).join('');
   agotadas = agotadas.filter(t => tallas.includes(t));
+  pintarGuiaProd();
   $('#pAgot').innerHTML = tallas.length ? tallas.map(t => `<button type="button" class="chip ${agotadas.includes(t) ? 'out' : ''}" data-ag="${esc(t)}" aria-pressed="${agotadas.includes(t)}" aria-label="Talla ${esc(t)}: ${agotadas.includes(t) ? 'agotada' : 'disponible'}">${esc(t)}</button>`).join('') : '<span class="hint">Primero elige las tallas.</span>';
 }
 $('#pAgot').addEventListener('click', e => {
@@ -1013,6 +1081,37 @@ $('#pAgot').addEventListener('click', e => {
   agotadas = agotadas.includes(t) ? agotadas.filter(x => x !== t) : [...agotadas, t];
   sucio = true; pintarTallas();
 });
+/* guía de tallas del producto: filas = tallas elegidas, columnas = medidas de su categoría */
+let gvals = {}, medNueva = null;
+const catEditor = () => $('#pCat').value === '__nueva' ? norm($('#pCatNew').value) : $('#pCat').value;
+const camposEditor = () => $('#pCat').value === '__nueva' ? (medNueva || medidasSugeridas($('#pCatNew').value)) : medidasDe($('#pCat').value);
+function pintarGuiaProd(){
+  const campos = camposEditor(), cat = catEditor();
+  $('#gtInfo').innerHTML = `Medidas de <b>${esc(cat || 'la nueva categoría')}</b>: ${esc(campos.join(', '))}. Llena las que tengas; si dejas todo vacío, la tienda no muestra guía.`;
+  $('#pGt').innerHTML = tallas.length ? `<thead><tr><th>Talla</th>${campos.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${tallas.map(t => `<tr><td>${esc(t)}</td>${campos.map(c => `<td><input data-gt="${esc(t)}" data-gc="${esc(c)}" value="${esc(gvals[t]?.[c] || '')}" maxlength="12" placeholder="–" aria-label="${esc(c)} talla ${esc(t)}"></td>`).join('')}</tr>`).join('')}</tbody>` : '<tbody><tr><td class="hint" style="text-align:left;font-weight:500">Primero elige las tallas.</td></tr></tbody>';
+}
+$('#pGt').addEventListener('input', e => { const i = e.target.closest('[data-gt]'); if (!i) return; (gvals[i.dataset.gt] = gvals[i.dataset.gt] || {})[i.dataset.gc] = i.value; });
+$('#pCatNew').addEventListener('input', () => { if (!medNueva) pintarGuiaProd(); });
+$('#gtMed').onclick = async () => {
+  const nueva = $('#pCat').value === '__nueva', cat = catEditor();
+  if (nueva && !cat) { $('#pCatNew').focus(); return toast('Primero escribe el nombre de la nueva categoría'); }
+  const r = await elegirMedidas(cat, camposEditor()); if (!r) return;
+  if (nueva) { medNueva = r; pintarGuiaProd(); return toast('Medidas listas: se guardan con el producto'); }
+  try { await guardarAjustes({medidas: listaMedidas(cat, r)}); pintarGuiaProd(); pintarCats(); toast(`Medidas de ${cat} guardadas`, 'ok'); }
+  catch (er) { toast(errGuardar(er), 'bad'); }
+};
+$('#gtClear').onclick = async () => { if (!(await dialogo({titulo: '¿Vaciar la guía de tallas?', texto: 'Se borran las medidas de este producto cuando guardes.', ok: 'Vaciar', peligro: true}))) return; gvals = {}; $('#pGtNota').value = ''; sucio = true; pintarGuiaProd(); };
+$('#gtCopy').onclick = async () => {
+  const cat = catEditor();
+  const con = productos.filter(p => p !== edit && p.guia && Array.isArray(p.guia.filas) && p.guia.filas.length)
+    .sort((a, b) => (sameText(b.categoria, cat) - sameText(a.categoria, cat))).slice(0, 12);
+  if (!con.length) return toast('Ningún otro producto tiene guía de tallas todavía');
+  const k = await menu('Copiar guía de…', con.map(p => ({k: p.id, t: `${p.nombre} (${p.categoria || 'sin categoría'})`, ic: 'i-ruler'})));
+  const o = productos.find(p => p.id === k); if (!o) return;
+  o.guia.filas.forEach(f => { gvals[f.t] = gvals[f.t] || {}; o.guia.campos.forEach((c, i) => { if ((f.v || [])[i]) gvals[f.t][c] = f.v[i]; }); });
+  if (o.guia.nota && !$('#pGtNota').value) $('#pGtNota').value = o.guia.nota;
+  sucio = true; pintarGuiaProd(); toast('Medidas copiadas');
+};
 $('#btnTodoDisp').onclick = () => { agotadas = []; sucio = true; pintarTallas(); };
 $('#btnTodoAgot').onclick = () => { agotadas = [...tallas]; sucio = true; pintarTallas(); };
 
@@ -1182,10 +1281,14 @@ $('#shSave').onclick = async () => {
     precioAnterior: antes > 0 ? Math.round(antes * 100) / 100 : 0,
     esOferta: $('#pOferta').checked ? 'si' : 'no', tallas: [...tallas],
     tallasAgotadas: agotadas.filter(t => tallas.includes(t)), colores: colores.map(c => ({n: c.n, h: c.h, fotos: c.fotos.filter(f => f.url && f.estado === 'ok').map(f => f.url)})), nuevo: $('#pNuevo').checked,
+    guia: (() => {
+      const campos = camposEditor(), filas = tallas.map(t => ({t, v: campos.map(c => norm(gvals[t]?.[c]))})).filter(f => f.v.some(Boolean));
+      return filas.length ? {campos, filas, nota: norm($('#pGtNota').value)} : null;
+    })(),
     imagenes: fotos.filter(f => f.url).map(f => f.url), visible: $('#pVisible').checked, actualizado: F.serverTimestamp()
   };
   try {
-    if (!ajustes.categorias.some(c => sameText(c, categoria))) await guardarAjustes({categorias: [...ajustes.categorias, categoria]});
+    if (!ajustes.categorias.some(c => sameText(c, categoria))) await guardarAjustes({categorias: [...ajustes.categorias, categoria], medidas: listaMedidas(categoria, medNueva || medidasSugeridas(categoria))});
     if (edit) {
       // limpia los campos antiguos de fotos (imagenUrl, imagenUrl2…) para que no se dupliquen
       await F.updateDoc(F.doc(db, 'productos', edit.id), {...data, imagenUrl: F.deleteField(), imagenUrl2: F.deleteField(), imagenUrl3: F.deleteField(), imagenUrl4: F.deleteField()});
@@ -1224,7 +1327,8 @@ function pintarCats(){
     <form class="crow" data-ren="${i}"><label class="sr" for="cIn">Nuevo nombre</label><input id="cIn" value="${esc(c)}" maxlength="40">
       <button class="btn btn-sm btn-navy" type="submit">Guardar</button><button class="btn btn-sm btn-line" type="button" data-cancel>Cancelar</button></form>` : `
     <div class="crow">
-      <div class="nm"><b>${esc(c)}</b><small>${cuenta(c)} ${cuenta(c) === 1 ? 'producto' : 'productos'}</small></div>
+      <div class="nm"><b>${esc(c)}</b><small>${cuenta(c)} ${cuenta(c) === 1 ? 'producto' : 'productos'}</small><small class="med">Medidas: ${esc(medidasDe(c).join(', '))}</small></div>
+      <button class="icon-btn" data-cmed="${i}" aria-label="Medidas de la guía de tallas de ${esc(c)}" title="Medidas de la guía de tallas"><svg class="ic"><use href="#i-ruler"/></svg></button>
       <button class="icon-btn" data-cup="${i}" aria-label="Subir ${esc(c)}" ${i === 0 ? 'disabled' : ''}><svg class="ic"><use href="#i-up"/></svg></button>
       <button class="icon-btn" data-cdown="${i}" aria-label="Bajar ${esc(c)}" ${i === l.length - 1 ? 'disabled' : ''}><svg class="ic"><use href="#i-down"/></svg></button>
       <button class="icon-btn" data-cren="${i}" aria-label="Cambiar nombre de ${esc(c)}"><svg class="ic"><use href="#i-edit"/></svg></button>
@@ -1236,7 +1340,9 @@ $('#fNewCat').addEventListener('submit', async e => {
   e.preventDefault();
   const n = norm($('#newCat').value); if (!n) return;
   if (ajustes.categorias.some(c => sameText(c, n))) return toast('Esa categoría ya existe');
-  try { await guardarAjustes({categorias: [...ajustes.categorias, n]}); $('#newCat').value = ''; pintarCats(); pintarFiltros(); toast('Categoría agregada', 'ok'); }
+  const med = await elegirMedidas(n, medidasSugeridas(n));
+  if (!med) return toast('Categoría no agregada');
+  try { await guardarAjustes({categorias: [...ajustes.categorias, n], medidas: listaMedidas(n, med)}); $('#newCat').value = ''; pintarCats(); pintarFiltros(); toast('Categoría agregada con sus medidas', 'ok'); }
   catch (er) { toast(errGuardar(er), 'bad'); }
 });
 $('#cList').addEventListener('click', async e => {
@@ -1244,6 +1350,11 @@ $('#cList').addEventListener('click', async e => {
   const l = [...ajustes.categorias];
   if (b.dataset.cancel !== undefined) { editandoCat = -1; return pintarCats(); }
   if (b.dataset.cren !== undefined) { editandoCat = +b.dataset.cren; return pintarCats(); }
+  if (b.dataset.cmed !== undefined) {
+    const c = l[+b.dataset.cmed], r = await elegirMedidas(c, medidasDe(c)); if (!r) return;
+    try { await guardarAjustes({medidas: listaMedidas(c, r)}); pintarCats(); toast(`Medidas de ${c} guardadas`, 'ok'); } catch (er) { toast(errGuardar(er), 'bad'); }
+    return;
+  }
   if (b.dataset.cup !== undefined || b.dataset.cdown !== undefined) {
     const i = +(b.dataset.cup ?? b.dataset.cdown), j = b.dataset.cup !== undefined ? i - 1 : i + 1;
     [l[i], l[j]] = [l[j], l[i]];
@@ -1261,7 +1372,7 @@ $('#cList').addEventListener('click', async e => {
     } else if (!(await dialogo({titulo: `¿Eliminar "${c}"?`, texto: 'No tiene productos.', ok: 'Eliminar', peligro: true}))) return;
     try {
       if (destino) await moverProductos(c, destino);
-      l.splice(i, 1); await guardarAjustes({categorias: l});
+      l.splice(i, 1); await guardarAjustes({categorias: l, medidas: listaMedidas(c, null)});
       if (sameText(fcat, c)) fcat = 'Todas';
       pintarCats(); pintarFiltros(); pintarLista(); toast('Categoría eliminada', 'ok');
     } catch (er) { console.error(er); toast(errGuardar(er), 'bad'); }
@@ -1276,7 +1387,7 @@ $('#cList').addEventListener('submit', async e => {
   const btn = f.querySelector('[type=submit]'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span>';
   try {
     await moverProductos(viejo, nuevo);
-    const l = [...ajustes.categorias]; l[i] = nuevo; await guardarAjustes({categorias: l});
+    const l = [...ajustes.categorias]; l[i] = nuevo; await guardarAjustes({categorias: l, medidas: listaMedidas(viejo, null).concat([{cat: nuevo, campos: medidasDe(viejo)}])});
     if (sameText(fcat, viejo)) fcat = nuevo;
     editandoCat = -1; pintarCats(); pintarFiltros(); pintarLista(); toast('Nombre actualizado en todos sus productos', 'ok');
   } catch (er) { console.error(er); toast(errGuardar(er), 'bad'); btn.disabled = false; btn.textContent = 'Guardar'; }
@@ -1322,23 +1433,6 @@ $('#fBn').addEventListener('submit', async e => {
   catch (er) { toast(errGuardar(er), 'bad'); }
   b.disabled = false;
 });
-/* guía de tallas */
-let gtFilas = [];
-function pintarGuia(){
-  $('#gtRows').innerHTML = gtFilas.map((f, i) => `<tr>${[0, 1, 2, 3].map(k => `<td><input data-r="${i}" data-c="${k}" value="${esc(f[k] || '')}" maxlength="12" aria-label="${['Talla', 'Cintura', 'Cadera', 'Largo'][k]} fila ${i + 1}" ${k ? 'inputmode="text"' : ''}></td>`).join('')}<td><button type="button" class="icon-btn" data-gdel="${i}" aria-label="Quitar fila ${i + 1}" style="color:var(--bad)"><svg class="ic"><use href="#i-trash"/></svg></button></td></tr>`).join('') || '<tr><td colspan="5" class="hint" style="padding:8px 4px">Sin medidas todavía.</td></tr>';
-}
-$('#gtRows').addEventListener('input', e => { const t = e.target.closest('[data-r]'); if (t) gtFilas[+t.dataset.r][+t.dataset.c] = t.value; });
-$('#gtRows').addEventListener('click', e => { const b = e.target.closest('[data-gdel]'); if (b) { gtFilas.splice(+b.dataset.gdel, 1); pintarGuia(); } });
-$('#gtAdd').onclick = () => { gtFilas.push(['', '', '', '']); pintarGuia(); $(`#gtRows [data-r="${gtFilas.length - 1}"][data-c="0"]`)?.focus(); };
-$('#gtFill').onclick = () => { const ya = gtFilas.map(f => norm(f[0]).toUpperCase()); TALLAS_BASE.forEach(t => { if (!ya.includes(t)) gtFilas.push([t, '', '', '']); }); pintarGuia(); };
-$('#fGt').addEventListener('submit', async e => {
-  e.preventDefault();
-  const filas = gtFilas.map(f => [0, 1, 2, 3].map(k => norm(f[k]))).filter(f => f.some(Boolean));
-  const b = $('#btnGt'); b.disabled = true;
-  try { await guardarAjustes({guiaTallas: {columnas: ['Talla', 'Cintura (cm)', 'Cadera (cm)', 'Largo (cm)'], filas: filas.map(f => ({t: f[0], a: f[1], b: f[2], c: f[3]})), nota: norm($('#gtNota').value)}}); gtFilas = filas; pintarGuia(); toast(filas.length ? 'Guía de tallas guardada' : 'Guía de tallas vacía: no se mostrará', 'ok'); }
-  catch (er) { toast(errGuardar(er), 'bad'); }
-  b.disabled = false;
-});
 /* pagos y envíos */
 function pintarPagos(){
   const p = ajustes.pagos || {}, en = ajustes.envios || {};
@@ -1372,9 +1466,6 @@ $('#fPay').addEventListener('submit', async e => {
 
 function pintarAjustes(){
   pintarBanner(); pintarPagos();
-  const gt = ajustes.guiaTallas;
-  gtFilas = gt && Array.isArray(gt.filas) ? gt.filas.map(f => Array.isArray(f) ? [...f] : [f.t, f.a, f.b, f.c]) : [];
-  $('#gtNota').value = gt?.nota || ''; pintarGuia();
   $('#ajWa').value = ajustes.whatsapp || '';
   $('#ajAn').value = ajustes.anuncio || '';
   [['mujer', 'portadaMujer', '#cvMujer', 'linear-gradient(150deg,#0d2150 0%,#3a2a6e 55%,#d8508a 135%)'], ['hombre', 'portadaHombre', '#cvHombre', 'linear-gradient(150deg,#0d2150 0%,#13408f 58%,#3ea8ff 135%)']].forEach(([k, campo, sel, grad]) => {
