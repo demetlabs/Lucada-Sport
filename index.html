@@ -416,6 +416,29 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
 .pay-card li b{color:var(--ink)}
 .pay-card li span{color:var(--mut);text-align:right}
 .pay-card .nota{color:var(--mut);font-size:14px;margin-top:12px}
+
+[hidden]{display:none!important}
+/* ===== detalle del producto a pantalla completa ===== */
+.modal{padding:0}
+.m-box{max-width:none;width:100vw;height:100vh;height:100dvh;border-radius:0;grid-template-columns:minmax(0,1.45fr) minmax(380px,1fr);transform:translateY(28px);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.m-info{padding:64px clamp(28px,4vw,64px) 40px;display:flex;flex-direction:column}
+.m-info > *{max-width:560px;width:100%}
+.m-info h3{font-size:clamp(32px,3vw,46px)}
+.m-close{top:max(16px,env(safe-area-inset-top));right:16px;width:46px;height:46px;background:#fff;box-shadow:0 6px 18px -6px rgba(7,22,52,.45)}
+.gal-thumbs button{width:72px;height:72px}
+.gt tr.on td{background:#e9f0ff;color:var(--navy-800)}
+.gt-tw{overflow-x:auto;margin:0 -4px}
+@media(max-width:520px){ .gt-box{padding:18px 14px} .gt th,.gt td{padding:9px 5px;font-size:14px} .gt th{font-size:12.5px;line-height:1.2} }
+.gt .gt-prod{color:var(--mut);font-weight:600;font-size:14px;margin-top:2px}
+@media(max-width:860px){
+  .m-box{display:block;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .gal{height:auto}
+  .gal-main{flex:none;height:min(68vh,130vw);height:min(68dvh,130vw)}
+  .m-info{min-height:0;padding:20px 18px 0;overflow:visible}
+  .m-info > *{max-width:none}
+  .m-actions{z-index:2}
+  .m-close{position:fixed}
+}
 </style>
 </head>
 <body>
@@ -1047,7 +1070,7 @@ function aplicarAjustes(a){
     if (/^https:\/\//i.test(b.imagen || '')) pr.style.backgroundImage = `url("${b.imagen.replace(/"/g, '%22')}")`;
     $('#promoT').textContent = b.titulo || '';
     $('#promoX').textContent = b.texto || ''; $('#promoX').hidden = !b.texto;
-    $('#promoB').textContent = b.boton || 'Ver catálogo';
+    $('#promoB').textContent = b.boton || ''; $('#promoB').hidden = !b.boton;
     $('#promoB').onclick = () => {
       const d = String(b.destino || '');
       if (d === 'mujer' || d === 'hombre') setGen(d);
@@ -1208,10 +1231,16 @@ function openModal(id, color){
   $('#mOut').hidden = !out;
   $('#mAdd').disabled = out; $('#mAdd').style.opacity = out ? .5 : '';
   $('#mWaTxt').textContent = out ? 'Consultar disponibilidad' : 'Pedir ahora';
-  $('#mGuia').hidden = !guia;
+  $('#mGuia').hidden = !guiaDe(p);
+  if (!$('#modal').classList.contains('open') && !modalHist) { try { history.pushState({modal: 1}, ''); modalHist = true; } catch {} }
   $('#modal').classList.add('open'); $('#overlay').classList.add('open'); document.body.classList.add('ov');
+  $('#modal .m-box').scrollTop = 0; $('.m-info').scrollTop = 0;
 }
-function closeModal(){ $('#modal').classList.remove('open'); if (!$('#drawer').classList.contains('open')) { $('#overlay').classList.remove('open'); document.body.classList.remove('ov'); } }
+let modalHist = false;
+window.addEventListener('popstate', e => { if ($('#modal').classList.contains('open') && !(e.state && e.state.modal)) { modalHist = false; closeModal(true); } });
+function closeModal(desdeAtras){
+  if (modalHist && desdeAtras !== true) { modalHist = false; try { history.back(); } catch {} }
+  $('#modal').classList.remove('open'); $('#modal .m-box').scrollTop = 0; if (!$('#drawer').classList.contains('open')) { $('#overlay').classList.remove('open'); document.body.classList.remove('ov'); } }
 $('#galPrev').onclick = () => setGal(gi - 1);
 $('#galNext').onclick = () => setGal(gi + 1);
 $('#galThumbs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGal(+b.dataset.k); });
@@ -1352,17 +1381,23 @@ $('#mShare').onclick = async () => {
   try { await navigator.clipboard.writeText(url); toast('Enlace copiado'); } catch { prompt('Copia este enlace:', url); }
 };
 /* guía de tallas */
+/* guía del producto (medidas de su categoría); si no tiene, la guía general antigua */
+function guiaDe(p){
+  const g = p && p.guia;
+  if (g && Array.isArray(g.campos) && Array.isArray(g.filas) && g.filas.length)
+    return {cols: ['Talla', ...g.campos.map(c => c + ' (cm)')], filas: g.filas.map(f => [f.t, ...g.campos.map((_, k) => (f.v || [])[k] || '–')]), nota: g.nota || ''};
+  if (guia) return {cols: Array.isArray(guia.columnas) && guia.columnas.length ? guia.columnas : ['Talla', 'Cintura', 'Cadera', 'Largo'], filas: guia.filas, nota: guia.nota || ''};
+  return null;
+}
 $('#mGuia').onclick = () => {
-  if (!guia) return;
-  const cols = Array.isArray(guia.columnas) && guia.columnas.length ? guia.columnas : ['Talla', 'Cintura', 'Cadera', 'Largo'];
-  const filas = guia.filas;
-  $('#gtBody').innerHTML = `<table><thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${filas.map(f => `<tr>${cols.map((_, k) => `<td>${esc(f[k] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody></table>${guia.nota ? `<p class="gt-nota">${esc(guia.nota)}</p>` : ''}`;
+  const g = guiaDe(current); if (!g) return;
+  $('#gtBody').innerHTML = `<p class="gt-prod">${esc(current.nombre)}</p><div class="gt-tw"><table><thead><tr>${g.cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${g.filas.map(f => `<tr class="${f[0] === currentSize ? 'on' : ''}">${g.cols.map((_, k) => `<td>${esc(f[k] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${g.nota ? `<p class="gt-nota">${esc(g.nota)}</p>` : ''}`;
   $('#gt').classList.add('open'); $('#gtClose').focus();
 };
 const cerrarGuia = () => $('#gt').classList.remove('open');
 $('#gtClose').onclick = cerrarGuia;
 $('#gt').addEventListener('click', e => { if (e.target.id === 'gt') cerrarGuia(); });
-$('#closeModal').onclick = closeModal;
+$('#closeModal').onclick = () => closeModal();
 $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 
 /* ---------- carrito ---------- */
@@ -1415,6 +1450,7 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (e.key === 'Escape' && $('#gt').classList.contains('open')) { cerrarGuia(); return; }
+  if (e.key === 'Escape' && $('#modal').classList.contains('open')) { closeModal(); return; }
   if (e.key === 'Escape') closeCart();
   if ($('#modal').classList.contains('open') && gn > 1) { if (e.key === 'ArrowLeft') setGal(gi - 1); if (e.key === 'ArrowRight') setGal(gi + 1); }
 });
