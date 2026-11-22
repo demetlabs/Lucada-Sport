@@ -363,6 +363,52 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
 }
 .by-link{display:inline-flex;align-items:center;gap:inherit;color:inherit;text-decoration:none;border-radius:6px;transition:color .2s,opacity .2s}.by-link:hover{color:#fff}.by-link:hover b{text-decoration:underline;text-underline-offset:3px}
 .by-link{white-space:nowrap}.by .by-link .dl-logo{width:26px;height:26px;flex:none;background:none;border:0;padding:0;box-shadow:none;border-radius:0;object-fit:contain}.by-link .dl-dot{display:inline-block;width:6px;height:6px;border-radius:2px;background:#10B981;margin-left:-4px;transform:translateY(2px)}
+
+/* ===== funciones nuevas del panel ===== */
+.t-badges{position:absolute;top:12px;left:12px;z-index:2;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.t-badges .badge-of{position:static}
+.badge-new,.badge-out{font-weight:800;font-size:13px;padding:6px 12px;border-radius:999px;color:#fff}
+.badge-new{background:#10b981;box-shadow:0 6px 16px -4px rgba(16,185,129,.6)}
+.badge-out{background:#3a4157}
+.tarjeta.agotado .t-img img{filter:grayscale(.55);opacity:.8}
+.t-sizes s{opacity:.55}
+.t-colors{display:flex;gap:6px;align-items:center;margin:8px 0 2px}
+.t-colors i{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(10,22,51,.18);display:inline-block}
+.t-colors small{color:var(--mut);font-size:12px;font-weight:700}
+.btn-add:disabled{background:#c5cddb;cursor:not-allowed;transform:none}
+.size.out{opacity:.45;text-decoration:line-through;cursor:not-allowed;background:#f3f5f9}
+.size.out:hover{border-color:var(--line)}
+.m-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.m-link{color:var(--blue);font-weight:700;font-size:14px;text-decoration:underline;text-underline-offset:3px;display:inline-flex;gap:6px;align-items:center}
+.m-out{background:#fff1f3;border:1px solid #ffd0da;color:#a3223a;font-weight:700;border-radius:12px;padding:10px 14px;margin:-6px 0 18px;font-size:14px}
+.colors{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 22px}
+.color{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:600;font-size:14px;transition:.2s}
+.color i{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(10,22,51,.18)}
+.color:hover{border-color:var(--blue)}
+.color.on{border-color:var(--navy-900);box-shadow:inset 0 0 0 1.5px var(--navy-900)}
+.m-share{flex:0 0 auto!important;padding:14px!important}
+.gt{position:fixed;top:0;right:0;bottom:0;left:0;z-index:190;display:grid;place-items:center;padding:20px;background:rgba(5,12,28,.6);opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s .25s}
+.gt.open{opacity:1;visibility:visible;transition:opacity .25s}
+.gt-box{background:#fff;border-radius:22px;max-width:560px;width:100%;padding:24px;max-height:85vh;overflow:auto}
+.gt-box h3{font-size:26px}
+.gt table{width:100%;border-collapse:collapse;margin-top:14px;font-size:15px}
+.gt th,.gt td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:center}
+.gt th{background:#f1f4fa;font-weight:800;color:var(--navy-800)}
+.gt td:first-child{font-weight:800}
+.gt .gt-nota{color:var(--mut);font-size:14px;margin-top:12px}
+.promo{position:relative;border-radius:28px;overflow:hidden;margin-bottom:30px;min-height:240px;display:flex;align-items:flex-end;color:#fff;background-color:#0d2150;background-size:cover;background-position:center}
+.promo::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,12,28,.88) 0%,rgba(5,12,28,.5) 55%,rgba(5,12,28,.12) 100%)}
+.promo-in{position:relative;padding:clamp(26px,5vw,52px);max-width:640px}
+.promo h3{font-size:clamp(30px,4.6vw,48px);line-height:1.02}
+.promo p{color:#dbe5fb;margin:10px 0 20px;font-size:17px}
+.pay{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:44px}
+.pay-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px 24px}
+.pay-card h3{font-size:20px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.pay-card ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.pay-card li{display:flex;justify-content:space-between;gap:12px;font-size:15px;border-bottom:1px dashed var(--line);padding-bottom:9px}
+.pay-card li b{color:var(--ink)}
+.pay-card li span{color:var(--mut);text-align:right}
+.pay-card .nota{color:var(--mut);font-size:14px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -372,6 +418,7 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
     <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
     <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
     <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
     <symbol id="i-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
@@ -474,6 +521,7 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
 <!-- CATÁLOGO -->
 <section class="sec" id="catalogo" style="padding-top:0">
   <div class="wrap">
+    <div class="promo" id="promo" hidden><div class="promo-in"><h3 class="disp" id="promoT"></h3><p id="promoX" hidden></p><button class="btn btn-chrome" id="promoB" type="button">Ver catálogo</button></div></div>
     <div class="sec-head rv">
       <h2 class="h2 disp">Catálogo</h2>
       <p>Explora todos nuestros modelos, selecciona tus favoritas y procesa tu pedido al instante.</p>
@@ -532,6 +580,7 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
       <div class="step rv"><h3>Arma tu carrito</h3><p>Añade todo lo que necesites y revisa el total de tu pedido al instante.</p></div>
       <div class="step rv"><h3>Confirma por WhatsApp</h3><p>Envíanos tu pedido con un clic y coordinamos el pago y el envío de forma segura.</p></div>
     </div>
+    <div class="pay" id="payBox" hidden></div>
   </div>
 </section>
 
@@ -556,7 +605,7 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
       <p>Confección propia en ropa deportiva y casual para mujer y hombre. Directo de fábrica para todo el perú.</p>
     </div>
     <div><h4>Navegación</h4><a href="#inicio">Inicio</a><a href="#colecciones">Colecciones</a><a href="#catalogo">Catálogo</a><a href="#pedido">Cómo pedir</a></div>
-    <div><h4>Contacto</h4><a href="#" onclick="contactoWA();return false">WhatsApp +51 967 126 926</a><a href="#catalogo">Perú</a></div>
+    <div><h4>Contacto</h4><a href="#" onclick="contactoWA();return false" id="footWa">WhatsApp +51 967 126 926</a><a href="#catalogo">Perú</a></div>
   </div>
   <p class="copy"><span>© <span id="year"></span> Lucada Sport. Todos los derechos reservados.</span><span class="by">Diseñado y desarrollado por <a class="by-link" href="https://demetlabs.com/" target="_blank" rel="noopener" aria-label="Demet Labs, demetlabs.com (se abre en una pestaña nueva)"><img class="dl-logo" src="data:image/png;base64,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" alt="" width="24" height="24" loading="lazy"><b>Demet Labs</b><i class="dl-dot" aria-hidden="true"></i></a></span></p>
 </footer>
@@ -570,7 +619,7 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
   <div class="d-body" id="cartBody"></div>
   <div class="d-foot" id="cartFoot">
     <div class="total"><span>Total</span><span id="cartTotal">S/ 0.00</span></div>
-    <small>El envío se coordina por WhatsApp.</small>
+    <small id="cartEnvio">El envío se coordina por WhatsApp.</small>
     <button class="btn btn-wa" id="checkout"><svg class="ic"><use href="#i-wa"/></svg>Enviar pedido por WhatsApp</button>
   </div>
 </aside>
@@ -593,13 +642,26 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
       <h3 class="disp" id="mName"></h3>
       <div class="m-prices"><span class="precio" id="mPrice"></span><s id="mOld"></s></div>
       <p class="desc" id="mDesc"></p>
-      <label>Talla</label>
+      <p class="m-out" id="mOut" hidden>Este producto está agotado por ahora. Escríbenos y te avisamos cuando vuelva.</p>
+      <div id="mColorsBox" hidden>
+        <label>Color: <span id="mColorName"></span></label>
+        <div class="colors" id="mColors"></div>
+      </div>
+      <div class="m-row"><label>Talla</label><button class="m-link" id="mGuia" type="button" hidden><svg class="ic"><use href="#i-ruler"/></svg>Guía de tallas</button></div>
       <div class="sizes" id="mSizes"></div>
       <div class="m-actions">
         <button class="btn btn-navy" id="mAdd"><svg class="ic"><use href="#i-cart"/></svg>Agregar al carrito</button>
-        <button class="btn btn-line" id="mWa"><svg class="ic"><use href="#i-wa"/></svg>Pedir ahora</button>
+        <button class="btn btn-line" id="mWa"><svg class="ic"><use href="#i-wa"/></svg><span id="mWaTxt">Pedir ahora</span></button>
+        <button class="btn btn-line m-share" id="mShare" aria-label="Compartir este producto" title="Compartir"><svg class="ic"><use href="#i-share"/></svg></button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="gt" id="gt" role="dialog" aria-modal="true" aria-labelledby="gtT">
+  <div class="gt-box">
+    <div class="m-row"><h3 class="disp" id="gtT">Guía de tallas</h3><button class="x" id="gtClose" aria-label="Cerrar guía de tallas"><svg class="ic"><use href="#i-x"/></svg></button></div>
+    <div id="gtBody"></div>
   </div>
 </div>
 
@@ -869,7 +931,8 @@ let gen = "todo", cat = "Todos", q = "", orden = "def";
 const leer = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
 const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 let cart = leer('daluf_cart', []), favs = leer('daluf_favs', []);
-let current = null, currentSize = null;
+let current = null, currentSize = null, currentColor = null;
+let guia = null;
 
 /* Productos de ejemplo (tomados del catálogo de WhatsApp). Solo se muestran si Firebase no responde o está vacío. */
 const DEMO = [
@@ -913,6 +976,13 @@ function fotosDe(p){
   const out = [...new Set(l.filter(Boolean))].map(safeUrl).slice(0, 10);
   return out.length ? out : [PLACE];
 }
+/* tallas agotadas, colores y estado */
+const agotadasDe = p => Array.isArray(p.tallasAgotadas) ? p.tallasAgotadas : [];
+const disponiblesDe = p => tallasDe(p).filter(t => !agotadasDe(p).includes(t));
+const agotado = p => disponiblesDe(p).length === 0;
+const hexOk = h => /^#[0-9a-f]{3,8}$/i.test(h || '') ? h : '#cccccc';
+const coloresDe = p => (Array.isArray(p.colores) ? p.colores : []).filter(c => c && c.n).map(c => ({n: String(c.n), h: hexOk(c.h)}));
+const enlaceDe = id => location.origin + location.pathname + '?p=' + encodeURIComponent(id);
 const antes = p => Number(p.precioAnterior || p.precioAntes || p.precioOriginal || 0);
 const descuento = p => { const a = antes(p), n = Number(p.precio) || 0; return a > n && n > 0 ? Math.round((1 - n/a)*100) : 0; };
 
@@ -944,13 +1014,53 @@ async function cargar(){
   }
   $('#demoNote').hidden = !usandoDemo;
   buildChips(); render();
+  /* enlace directo a un producto: ...?p=ID */
+  const pid = new URLSearchParams(location.search).get('p');
+  if (pid && productos.some(x => x.id === pid)) { $('#catalogo').scrollIntoView(); setTimeout(() => openModal(pid), 350); }
 }
 
 /* ---------- ajustes que se cambian desde el panel ---------- */
 let ordenCats = [];
 function aplicarAjustes(a){
   const w = String(a.whatsapp || '').replace(/\D/g, '');
-  if (/^51\d{9}$/.test(w)) TEL = w;
+  if (/^51\d{9}$/.test(w)) { TEL = w; const fw = $('#footWa'); if (fw) fw.textContent = 'WhatsApp +51 ' + w.slice(2).replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3'); }
+  /* guía de tallas */
+  /* Firestore no guarda listas dentro de listas: cada fila llega como {t, a, b, c} */
+  if (a.guiaTallas && Array.isArray(a.guiaTallas.filas)) {
+    const filas = a.guiaTallas.filas.map(f => Array.isArray(f) ? f : [f.t, f.a, f.b, f.c]).map(f => f.map(c => String(c ?? '').trim())).filter(f => f.some(Boolean));
+    if (filas.length) guia = {...a.guiaTallas, filas};
+  }
+  /* banner promocional */
+  const b = a.banner || {};
+  if (b.activo && (b.titulo || b.imagen)) {
+    const pr = $('#promo'); pr.hidden = false;
+    if (/^https:\/\//i.test(b.imagen || '')) pr.style.backgroundImage = `url("${b.imagen.replace(/"/g, '%22')}")`;
+    $('#promoT').textContent = b.titulo || '';
+    $('#promoX').textContent = b.texto || ''; $('#promoX').hidden = !b.texto;
+    $('#promoB').textContent = b.boton || 'Ver catálogo';
+    $('#promoB').onclick = () => {
+      const d = String(b.destino || '');
+      if (d === 'mujer' || d === 'hombre') setGen(d);
+      else if (d.startsWith('cat:')) { setGen('todo'); cat = d.slice(4); buildChips(); render(); }
+      document.querySelector('#catalogo .toolbar').scrollIntoView({behavior: 'smooth', block: 'start'});
+    };
+  }
+  /* pagos y envíos */
+  const pg = a.pagos || {}, en = a.envios || {}, li = [];
+  if (pg.yape && pg.yape.activo) li.push(['Yape', [pg.yape.numero, pg.yape.titular].filter(Boolean).join(' · ')]);
+  if (pg.plin && pg.plin.activo) li.push(['Plin', [pg.plin.numero, pg.plin.titular].filter(Boolean).join(' · ')]);
+  if (pg.transferencia && pg.transferencia.activo) li.push(['Transferencia', pg.transferencia.detalle || '']);
+  if (pg.efectivo && pg.efectivo.activo) li.push(['Contra entrega', pg.efectivo.detalle || 'Pagas al recibir']);
+  const le = [];
+  if (en.lima) le.push(['Lima', en.lima]);
+  if (en.provincias) le.push(['Provincias', en.provincias]);
+  if (Number(en.gratisDesde) > 0) le.push(['Envío gratis', 'desde ' + money(en.gratisDesde)]);
+  const lista = l => '<ul>' + l.map(([k, v]) => `<li><b>${esc(k)}</b><span>${esc(v)}</span></li>`).join('') + '</ul>';
+  const cards = [];
+  if (li.length) cards.push(`<div class="pay-card rv"><h3 class="disp"><svg class="ic"><use href="#i-tag"/></svg>Medios de pago</h3>${lista(li)}${pg.nota ? `<p class="nota">${esc(pg.nota)}</p>` : ''}</div>`);
+  if (le.length || en.nota) cards.push(`<div class="pay-card rv"><h3 class="disp"><svg class="ic"><use href="#i-truck"/></svg>Envíos</h3>${le.length ? lista(le) : ''}${en.nota ? `<p class="nota">${esc(en.nota)}</p>` : ''}</div>`);
+  if (cards.length) { $('#payBox').innerHTML = cards.join(''); $('#payBox').hidden = false; }
+  if (le.length) $('#cartEnvio').textContent = 'Envío: ' + le.map(([k, v]) => `${k} ${v}`).join(' · ') + '. Lo coordinamos por WhatsApp.';
   if (a.anuncio) { const an = $('.announce'); if (an) an.textContent = a.anuncio; }
   if (Array.isArray(a.categorias)) ordenCats = a.categorias;
   [['mujer', a.portadaMujer], ['hombre', a.portadaHombre]].forEach(([k, u]) => {
@@ -969,6 +1079,7 @@ function buildChips(){
 }
 function filtrados(){
   let r = productos.filter(p => porPublico(p) && (cat === 'Todos' || catDe(p) === cat) && (p.nombre || '').toLowerCase().includes(q.toLowerCase()));
+  if (orden === 'def') r.sort((a, b) => (agotado(a) - agotado(b)) || ((a.orden ?? 1e9) - (b.orden ?? 1e9)));
   if (orden === 'asc') r.sort((a,b) => a.precio - b.precio);
   if (orden === 'desc') r.sort((a,b) => b.precio - a.precio);
   if (orden === 'az') r.sort((a,b) => (a.nombre || '').localeCompare(b.nombre || ''));
@@ -979,11 +1090,11 @@ function render(){
   $('#count').textContent = list.length === 1 ? '1 prenda' : `${list.length} prendas`;
   if (!list.length) { g.innerHTML = '<p class="empty">No encontramos prendas con esos filtros. Prueba con otra búsqueda o categoría.</p>'; return; }
   g.innerHTML = list.map(p => {
-    const off = descuento(p), tl = tallasDe(p), fo = fotosDe(p);
-    const badge = off ? `<span class="badge-of">-${off}%</span>` : (p.esOferta === 'si' ? '<span class="badge-of">Oferta</span>' : '');
+    const off = descuento(p), tl = tallasDe(p), fo = fotosDe(p), ag = agotadasDe(p), out = agotado(p), co = coloresDe(p);
+    const badge = '<div class="t-badges">' + (out ? '<span class="badge-out">Agotado</span>' : '') + (off ? `<span class="badge-of">-${off}%</span>` : (p.esOferta === 'si' ? '<span class="badge-of">Oferta</span>' : '')) + (p.nuevo ? '<span class="badge-new">Nuevo</span>' : '') + '</div>';
     const fav = favs.includes(p.id);
     return `
-    <article class="tarjeta rv" data-id="${esc(p.id)}">
+    <article class="tarjeta rv${out ? ' agotado' : ''}" data-id="${esc(p.id)}">
       <div class="t-img">
         ${badge}
         <button class="fav ${fav?'on':''}" data-fav="${esc(p.id)}" aria-label="Guardar en favoritos"><svg class="ic"><use href="#i-heart"/></svg></button>
@@ -994,10 +1105,11 @@ function render(){
         <span class="t-cat">${esc(catDe(p))}</span>
         <h3>${esc(p.nombre)}</h3>
         ${p.descripcion ? `<p class="t-desc">${esc(p.descripcion)}</p>` : ''}
-        <p class="t-sizes">Tallas ${esc(tl.join(', '))}</p>
+        ${co.length ? `<div class="t-colors" aria-label="Colores: ${esc(co.map(c => c.n).join(', '))}">${co.slice(0, 6).map(c => `<i style="background:${c.h}" title="${esc(c.n)}"></i>`).join('')}${co.length > 6 ? `<small>+${co.length - 6}</small>` : ''}</div>` : ''}
+        <p class="t-sizes">Tallas ${tl.map(t => ag.includes(t) ? `<s title="Agotada">${esc(t)}</s>` : esc(t)).join(', ')}</p>
         <div class="t-foot">
           <div class="prices"><span class="precio">${money(p.precio)}</span>${antes(p) > p.precio ? `<s>${money(antes(p))}</s>` : ''}</div>
-          <button class="btn-add" data-add="${esc(p.id)}">${tl.length > 1 ? 'Elegir talla' : 'Agregar'}</button>
+          <button class="btn-add" data-add="${esc(p.id)}" ${out ? 'disabled' : ''}>${out ? 'Agotado' : (disponiblesDe(p).length > 1 || co.length > 1 ? 'Elegir talla' : 'Agregar')}</button>
         </div>
       </div>
     </article>`;
@@ -1031,7 +1143,7 @@ $('#grid-productos').addEventListener('click', e => {
   if (add) {
     e.stopPropagation();
     const p = productos.find(x => x.id === add.dataset.add);
-    if (p && tallasDe(p).length === 1) addToCart(p.id, tallasDe(p)[0]); else openModal(add.dataset.add);
+    if (p && disponiblesDe(p).length === 1 && coloresDe(p).length <= 1) addToCart(p.id, disponiblesDe(p)[0], coloresDe(p)[0]?.n || null); else openModal(add.dataset.add);
     return;
   }
   const card = e.target.closest('.tarjeta');
@@ -1049,8 +1161,9 @@ function setGal(i){
 function openModal(id){
   const p = productos.find(x => x.id === id); if (!p) return;
   current = p;
-  const tl = tallasDe(p), fo = fotosDe(p);
-  currentSize = tl.includes('M') ? 'M' : tl[0];
+  const tl = tallasDe(p), fo = fotosDe(p), disp = disponiblesDe(p), co = coloresDe(p), out = agotado(p);
+  currentSize = disp.includes('M') ? 'M' : (disp[0] || null);
+  currentColor = co[0]?.n || null;
   gn = fo.length;
   $('#galTrack').innerHTML = fo.map((u, k) => `<img src="${esc(u)}" alt="${esc(p.nombre)}, foto ${k + 1}" draggable="false">`).join('');
   $('#galThumbs').innerHTML = fo.map((u, k) => `<button data-k="${k}" aria-label="Ver foto ${k + 1}"><img src="${esc(u)}" alt="" draggable="false"></button>`).join('');
@@ -1061,7 +1174,16 @@ function openModal(id){
   $('#mPrice').textContent = money(p.precio);
   $('#mOld').textContent = antes(p) > p.precio ? money(antes(p)) : '';
   $('#mDesc').textContent = p.descripcion || 'Ropa deportiva de calidad, fabricada para acompañarte en cada entrenamiento.';
-  $('#mSizes').innerHTML = tl.map(t => `<button class="size ${t===currentSize?'on':''}" data-s="${esc(t)}">${esc(t)}</button>`).join('');
+  $('#mSizes').innerHTML = tl.map(t => disp.includes(t)
+    ? `<button class="size ${t===currentSize?'on':''}" data-s="${esc(t)}">${esc(t)}</button>`
+    : `<button class="size out" disabled aria-disabled="true" title="Talla agotada">${esc(t)}<span class="sr"> (agotada)</span></button>`).join('');
+  $('#mColorsBox').hidden = !co.length;
+  $('#mColors').innerHTML = co.map(c => `<button class="color ${c.n===currentColor?'on':''}" data-col="${esc(c.n)}" aria-pressed="${c.n===currentColor}"><i style="background:${c.h}"></i>${esc(c.n)}</button>`).join('');
+  $('#mColorName').textContent = currentColor || '';
+  $('#mOut').hidden = !out;
+  $('#mAdd').disabled = out; $('#mAdd').style.opacity = out ? .5 : '';
+  $('#mWaTxt').textContent = out ? 'Consultar disponibilidad' : 'Pedir ahora';
+  $('#mGuia').hidden = !guia;
   $('#modal').classList.add('open'); $('#overlay').classList.add('open'); document.body.classList.add('ov');
 }
 function closeModal(){ $('#modal').classList.remove('open'); if (!$('#drawer').classList.contains('open')) { $('#overlay').classList.remove('open'); document.body.classList.remove('ov'); } }
@@ -1178,22 +1300,48 @@ $('#lbZoom').onclick = () => { const r = stage.getBoundingClientRect(); lbZoomAt
   stage.addEventListener('wheel', e => { e.preventDefault(); lbZoomAt(ls * (e.deltaY < 0 ? 1.18 : 1 / 1.18), e.clientX, e.clientY, false); }, {passive: false});
 }
 $('#mSizes').addEventListener('click', e => {
-  const b = e.target.closest('.size'); if (!b) return;
+  const b = e.target.closest('.size'); if (!b || b.classList.contains('out')) return;
   currentSize = b.dataset.s;
   $$('.size').forEach(s => s.classList.toggle('on', s === b));
 });
-$('#mAdd').onclick = () => { addToCart(current.id, currentSize); closeModal(); };
-$('#mWa').onclick = () => wa(`Hola Lucada Sport, me interesa: ${current.nombre} (talla ${currentSize}) - ${money(current.precio)}`);
+$('#mColors').addEventListener('click', e => {
+  const b = e.target.closest('.color'); if (!b) return;
+  currentColor = b.dataset.col; $('#mColorName').textContent = currentColor;
+  $$('#mColors .color').forEach(c => { c.classList.toggle('on', c === b); c.setAttribute('aria-pressed', c === b); });
+});
+$('#mAdd').onclick = () => { if (!currentSize) return; addToCart(current.id, currentSize, currentColor); closeModal(); };
+$('#mWa').onclick = () => {
+  const det = [currentSize ? `talla ${currentSize}` : '', currentColor ? `color ${currentColor}` : ''].filter(Boolean).join(', ');
+  if (agotado(current)) wa(`Hola Lucada Sport, ¿cuándo vuelve a estar disponible ${current.nombre}?\n${enlaceDe(current.id)}`);
+  else wa(`Hola Lucada Sport, me interesa: ${current.nombre} (${det}) - ${money(current.precio)}\n${enlaceDe(current.id)}`);
+};
+$('#mShare').onclick = async () => {
+  const url = enlaceDe(current.id);
+  if (navigator.share) { try { await navigator.share({title: current.nombre + ' | Lucada Sport', text: `${current.nombre} - ${money(current.precio)}`, url}); return; } catch (er) { if (er && er.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(url); toast('Enlace copiado'); } catch { prompt('Copia este enlace:', url); }
+};
+/* guía de tallas */
+$('#mGuia').onclick = () => {
+  if (!guia) return;
+  const cols = Array.isArray(guia.columnas) && guia.columnas.length ? guia.columnas : ['Talla', 'Cintura', 'Cadera', 'Largo'];
+  const filas = guia.filas;
+  $('#gtBody').innerHTML = `<table><thead><tr>${cols.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${filas.map(f => `<tr>${cols.map((_, k) => `<td>${esc(f[k] ?? '')}</td>`).join('')}</tr>`).join('')}</tbody></table>${guia.nota ? `<p class="gt-nota">${esc(guia.nota)}</p>` : ''}`;
+  $('#gt').classList.add('open'); $('#gtClose').focus();
+};
+const cerrarGuia = () => $('#gt').classList.remove('open');
+$('#gtClose').onclick = cerrarGuia;
+$('#gt').addEventListener('click', e => { if (e.target.id === 'gt') cerrarGuia(); });
 $('#closeModal').onclick = closeModal;
 $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 
 /* ---------- carrito ---------- */
 function saveCart(){ guardar('daluf_cart', cart); renderCart(); }
-function addToCart(id, talla){
-  const p = productos.find(x => x.id === id); if (!p) return;
-  const ex = cart.find(i => i.id === id && i.talla === talla);
-  if (ex) ex.qty++; else cart.push({id, talla, qty:1, nombre:p.nombre, precio:Number(p.precio) || 0, img:fotosDe(p)[0]});
-  saveCart(); toast(`Agregado: ${p.nombre} (talla ${talla})`);
+function addToCart(id, talla, color){
+  const p = productos.find(x => x.id === id); if (!p || !talla) return;
+  color = color || null;
+  const ex = cart.find(i => i.id === id && i.talla === talla && (i.color || null) === color);
+  if (ex) ex.qty++; else cart.push({id, talla, color, qty:1, nombre:p.nombre, precio:Number(p.precio) || 0, img:fotosDe(p)[0]});
+  saveCart(); toast(`Agregado: ${p.nombre} (talla ${talla}${color ? ', ' + color : ''})`);
   const c = $('#cartCount'); c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');
 }
 function renderCart(){
@@ -1205,7 +1353,7 @@ function renderCart(){
     <div class="ci">
       <img src="${esc(i.img)}" alt="">
       <div class="ci-info">
-        <h4>${esc(i.nombre)}</h4><small>Talla ${esc(i.talla)} · ${money(i.precio)}</small>
+        <h4>${esc(i.nombre)}</h4><small>Talla ${esc(i.talla)}${i.color ? ' · ' + esc(i.color) : ''} · ${money(i.precio)}</small>
         <div class="qty"><button data-m="${k}" aria-label="Quitar una unidad">−</button><b>${i.qty}</b><button data-p="${k}" aria-label="Agregar una unidad">+</button></div>
         <button class="rm" data-r="${k}">Quitar del carrito</button>
       </div>
@@ -1224,7 +1372,7 @@ const openCart = () => { $('#drawer').classList.add('open'); $('#overlay').class
 const closeCart = () => { $('#drawer').classList.remove('open'); $('#overlay').classList.remove('open'); $('#modal').classList.remove('open'); document.body.classList.remove('ov'); };
 $('#openCart').onclick = openCart; $('#closeCart').onclick = closeCart; $('#overlay').onclick = closeCart;
 $('#checkout').onclick = () => {
-  const lines = cart.map(i => `• ${i.qty}x ${i.nombre} (talla ${i.talla}) - ${money(i.precio*i.qty)}`).join('\n');
+  const lines = cart.map(i => `• ${i.qty}x ${i.nombre} (talla ${i.talla}${i.color ? ', ' + i.color : ''}) - ${money(i.precio*i.qty)}`).join('\n');
   const total = cart.reduce((a,i) => a + i.qty*i.precio, 0);
   wa(`Hola Lucada Sport, quiero hacer este pedido:\n\n${lines}\n\n*Total: ${money(total)}*`);
 };
@@ -1235,6 +1383,7 @@ document.addEventListener('keydown', e => {
     else if (e.key === 'ArrowRight') lbIr(1);
     return;
   }
+  if (e.key === 'Escape' && $('#gt').classList.contains('open')) { cerrarGuia(); return; }
   if (e.key === 'Escape') closeCart();
   if ($('#modal').classList.contains('open') && gn > 1) { if (e.key === 'ArrowLeft') setGal(gi - 1); if (e.key === 'ArrowRight') setGal(gi + 1); }
 });
