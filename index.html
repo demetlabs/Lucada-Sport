@@ -374,6 +374,13 @@ footer{background:var(--navy-950);color:#aab7d0;padding:56px 24px 28px}
 .t-sizes s{opacity:.55}
 .t-colors{display:flex;gap:6px;align-items:center;margin:8px 0 2px}
 .t-colors i{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(10,22,51,.18);display:inline-block}
+.t-colors button{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid transparent;padding:0;transition:.2s}
+.t-colors button i{width:18px;height:18px}
+.t-colors button.on{border-color:var(--navy-900)}
+.t-colors button:hover{border-color:var(--blue)}
+.color small{font-size:11px;color:var(--mut);font-weight:600}
+.gal-track{transition-property:transform,opacity}
+.gal.swap .gal-track{opacity:.35}
 .t-colors small{color:var(--mut);font-size:12px;font-weight:700}
 .btn-add:disabled{background:#c5cddb;cursor:not-allowed;transform:none}
 .size.out{opacity:.45;text-decoration:line-through;cursor:not-allowed;background:#f3f5f9}
@@ -973,7 +980,8 @@ function fotosDe(p){
   if (Array.isArray(p.imagenes)) l = l.concat(p.imagenes);
   else if (typeof p.imagenes === 'string') l = l.concat(p.imagenes.split(/[\s,|]+/));
   l.unshift(p.imagenUrl); l.push(p.imagenUrl2, p.imagenUrl3, p.imagenUrl4);
-  const out = [...new Set(l.filter(Boolean))].map(safeUrl).slice(0, 10);
+  let out = [...new Set(l.filter(Boolean))].map(safeUrl).slice(0, 10);
+  if (!out.length) out = [...new Set(coloresDe(p).flatMap(c => c.fotos))].slice(0, 10);
   return out.length ? out : [PLACE];
 }
 /* tallas agotadas, colores y estado */
@@ -981,8 +989,10 @@ const agotadasDe = p => Array.isArray(p.tallasAgotadas) ? p.tallasAgotadas : [];
 const disponiblesDe = p => tallasDe(p).filter(t => !agotadasDe(p).includes(t));
 const agotado = p => disponiblesDe(p).length === 0;
 const hexOk = h => /^#[0-9a-f]{3,8}$/i.test(h || '') ? h : '#cccccc';
-const coloresDe = p => (Array.isArray(p.colores) ? p.colores : []).filter(c => c && c.n).map(c => ({n: String(c.n), h: hexOk(c.h)}));
-const enlaceDe = id => location.origin + location.pathname + '?p=' + encodeURIComponent(id);
+const coloresDe = p => (Array.isArray(p.colores) ? p.colores : []).filter(c => c && c.n).map(c => ({n: String(c.n), h: hexOk(c.h), fotos: (Array.isArray(c.fotos) ? c.fotos : []).filter(u => /^https:\/\//i.test(u || '')).slice(0, 10)}));
+/* fotos del color elegido; si ese color no tiene fotos propias, las generales */
+const fotosColor = (p, color) => { const c = coloresDe(p).find(x => x.n === color); return c && c.fotos.length ? c.fotos : fotosDe(p); };
+const enlaceDe = (id, color) => location.origin + location.pathname + '?p=' + encodeURIComponent(id) + (color ? '&c=' + encodeURIComponent(color) : '');
 const antes = p => Number(p.precioAnterior || p.precioAntes || p.precioOriginal || 0);
 const descuento = p => { const a = antes(p), n = Number(p.precio) || 0; return a > n && n > 0 ? Math.round((1 - n/a)*100) : 0; };
 
@@ -1015,8 +1025,8 @@ async function cargar(){
   $('#demoNote').hidden = !usandoDemo;
   buildChips(); render();
   /* enlace directo a un producto: ...?p=ID */
-  const pid = new URLSearchParams(location.search).get('p');
-  if (pid && productos.some(x => x.id === pid)) { $('#catalogo').scrollIntoView(); setTimeout(() => openModal(pid), 350); }
+  const prm = new URLSearchParams(location.search), pid = prm.get('p');
+  if (pid && productos.some(x => x.id === pid)) { $('#catalogo').scrollIntoView(); setTimeout(() => openModal(pid, prm.get('c')), 350); }
 }
 
 /* ---------- ajustes que se cambian desde el panel ---------- */
@@ -1105,7 +1115,7 @@ function render(){
         <span class="t-cat">${esc(catDe(p))}</span>
         <h3>${esc(p.nombre)}</h3>
         ${p.descripcion ? `<p class="t-desc">${esc(p.descripcion)}</p>` : ''}
-        ${co.length ? `<div class="t-colors" aria-label="Colores: ${esc(co.map(c => c.n).join(', '))}">${co.slice(0, 6).map(c => `<i style="background:${c.h}" title="${esc(c.n)}"></i>`).join('')}${co.length > 6 ? `<small>+${co.length - 6}</small>` : ''}</div>` : ''}
+        ${co.length ? `<div class="t-colors" aria-label="Colores: ${esc(co.map(c => c.n).join(', '))}">${co.slice(0, 6).map(c => c.fotos.length ? `<button type="button" data-cc="${esc(c.n)}" data-img="${esc(c.fotos[0])}" aria-label="Ver color ${esc(c.n)}" title="${esc(c.n)}"><i style="background:${c.h}"></i></button>` : `<i style="background:${c.h}" title="${esc(c.n)}"></i>`).join('')}${co.length > 6 ? `<small>+${co.length - 6}</small>` : ''}</div>` : ''}
         <p class="t-sizes">Tallas ${tl.map(t => ag.includes(t) ? `<s title="Agotada">${esc(t)}</s>` : esc(t)).join(', ')}</p>
         <div class="t-foot">
           <div class="prices"><span class="precio">${money(p.precio)}</span>${antes(p) > p.precio ? `<s>${money(antes(p))}</s>` : ''}</div>
@@ -1129,6 +1139,14 @@ $('#buscar').addEventListener('input', e => { q = e.target.value; render(); });
 $('#orden').addEventListener('change', e => { orden = e.target.value; render(); });
 $('#chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (!b) return; cat = b.dataset.c; buildChips(); render(); });
 $('#grid-productos').addEventListener('click', e => {
+  const cc = e.target.closest('[data-cc]');
+  if (cc) {
+    e.stopPropagation();
+    const card = cc.closest('.tarjeta'), img = card.querySelector('.t-img img');
+    img.src = cc.dataset.img; card.dataset.col = cc.dataset.cc;
+    card.querySelectorAll('[data-cc]').forEach(b => b.classList.toggle('on', b === cc));
+    return;
+  }
   const fav = e.target.closest('[data-fav]');
   if (fav) {
     e.stopPropagation();
@@ -1143,11 +1161,11 @@ $('#grid-productos').addEventListener('click', e => {
   if (add) {
     e.stopPropagation();
     const p = productos.find(x => x.id === add.dataset.add);
-    if (p && disponiblesDe(p).length === 1 && coloresDe(p).length <= 1) addToCart(p.id, disponiblesDe(p)[0], coloresDe(p)[0]?.n || null); else openModal(add.dataset.add);
+    if (p && disponiblesDe(p).length === 1 && coloresDe(p).length <= 1) addToCart(p.id, disponiblesDe(p)[0], coloresDe(p)[0]?.n || null); else openModal(add.dataset.add, add.closest('.tarjeta').dataset.col);
     return;
   }
   const card = e.target.closest('.tarjeta');
-  if (card) openModal(card.dataset.id);
+  if (card) openModal(card.dataset.id, card.dataset.col);
 });
 
 /* ---------- vista rápida ---------- */
@@ -1158,17 +1176,24 @@ function setGal(i){
   $('#galCount').textContent = `${gi + 1} / ${gn}`;
   $$('#galThumbs button').forEach((b, k) => b.classList.toggle('on', k === gi));
 }
-function openModal(id){
-  const p = productos.find(x => x.id === id); if (!p) return;
-  current = p;
-  const tl = tallasDe(p), fo = fotosDe(p), disp = disponiblesDe(p), co = coloresDe(p), out = agotado(p);
-  currentSize = disp.includes('M') ? 'M' : (disp[0] || null);
-  currentColor = co[0]?.n || null;
-  gn = fo.length;
-  $('#galTrack').innerHTML = fo.map((u, k) => `<img src="${esc(u)}" alt="${esc(p.nombre)}, foto ${k + 1}" draggable="false">`).join('');
+let galFotos = [];
+function galeria(fo){
+  const mismo = fo.length === galFotos.length && fo.every((u, k) => u === galFotos[k]);
+  if (mismo) return setGal(0);
+  galFotos = fo; gn = fo.length;
+  const nom = current ? current.nombre + (currentColor ? ' ' + currentColor : '') : '';
+  $('#galTrack').innerHTML = fo.map((u, k) => `<img src="${esc(u)}" alt="${esc(nom)}, foto ${k + 1}" draggable="false">`).join('');
   $('#galThumbs').innerHTML = fo.map((u, k) => `<button data-k="${k}" aria-label="Ver foto ${k + 1}"><img src="${esc(u)}" alt="" draggable="false"></button>`).join('');
   $('.gal').classList.toggle('single', gn < 2);
   setGal(0);
+}
+function openModal(id, color){
+  const p = productos.find(x => x.id === id); if (!p) return;
+  current = p;
+  const tl = tallasDe(p), disp = disponiblesDe(p), co = coloresDe(p), out = agotado(p);
+  currentSize = disp.includes('M') ? 'M' : (disp[0] || null);
+  currentColor = (co.find(c => c.n === color) || co[0])?.n || null;
+  galFotos = []; galeria(fotosColor(p, currentColor));
   $('#mCat').textContent = catDe(p);
   $('#mName').textContent = p.nombre;
   $('#mPrice').textContent = money(p.precio);
@@ -1178,7 +1203,7 @@ function openModal(id){
     ? `<button class="size ${t===currentSize?'on':''}" data-s="${esc(t)}">${esc(t)}</button>`
     : `<button class="size out" disabled aria-disabled="true" title="Talla agotada">${esc(t)}<span class="sr"> (agotada)</span></button>`).join('');
   $('#mColorsBox').hidden = !co.length;
-  $('#mColors').innerHTML = co.map(c => `<button class="color ${c.n===currentColor?'on':''}" data-col="${esc(c.n)}" aria-pressed="${c.n===currentColor}"><i style="background:${c.h}"></i>${esc(c.n)}</button>`).join('');
+  $('#mColors').innerHTML = co.map(c => `<button class="color ${c.n===currentColor?'on':''}" data-col="${esc(c.n)}" aria-pressed="${c.n===currentColor}"${c.fotos.length ? ` title="${c.fotos.length} ${c.fotos.length === 1 ? 'foto' : 'fotos'}"` : ''}><i style="background:${c.h}"></i>${esc(c.n)}</button>`).join('');
   $('#mColorName').textContent = currentColor || '';
   $('#mOut').hidden = !out;
   $('#mAdd').disabled = out; $('#mAdd').style.opacity = out ? .5 : '';
@@ -1243,7 +1268,7 @@ function lbShow(i){
 }
 function abrirLb(i){
   if (!current) return;
-  lbFotos = fotosDe(current);
+  lbFotos = galFotos.length ? galFotos : fotosDe(current);
   lb.classList.toggle('single', lbFotos.length < 2);
   $('#lbThumbs').innerHTML = lbFotos.map((u, k) => `<button data-k="${k}" aria-label="Ver foto ${k + 1}"><img src="${esc(u)}" alt="" draggable="false"></button>`).join('');
   lb.classList.add('open'); lbShow(i);
@@ -1308,15 +1333,21 @@ $('#mColors').addEventListener('click', e => {
   const b = e.target.closest('.color'); if (!b) return;
   currentColor = b.dataset.col; $('#mColorName').textContent = currentColor;
   $$('#mColors .color').forEach(c => { c.classList.toggle('on', c === b); c.setAttribute('aria-pressed', c === b); });
+  /* muestra las fotos del color elegido */
+  const fo = fotosColor(current, currentColor);
+  if (!(fo.length === galFotos.length && fo.every((u, k) => u === galFotos[k]))) {
+    const g = $('.gal'); g.classList.add('swap');
+    setTimeout(() => { galeria(fo); g.classList.remove('swap'); }, 140);
+  }
 });
 $('#mAdd').onclick = () => { if (!currentSize) return; addToCart(current.id, currentSize, currentColor); closeModal(); };
 $('#mWa').onclick = () => {
   const det = [currentSize ? `talla ${currentSize}` : '', currentColor ? `color ${currentColor}` : ''].filter(Boolean).join(', ');
   if (agotado(current)) wa(`Hola Lucada Sport, ¿cuándo vuelve a estar disponible ${current.nombre}?\n${enlaceDe(current.id)}`);
-  else wa(`Hola Lucada Sport, me interesa: ${current.nombre} (${det}) - ${money(current.precio)}\n${enlaceDe(current.id)}`);
+  else wa(`Hola Lucada Sport, me interesa: ${current.nombre} (${det}) - ${money(current.precio)}\n${enlaceDe(current.id, currentColor)}`);
 };
 $('#mShare').onclick = async () => {
-  const url = enlaceDe(current.id);
+  const url = enlaceDe(current.id, currentColor);
   if (navigator.share) { try { await navigator.share({title: current.nombre + ' | Lucada Sport', text: `${current.nombre} - ${money(current.precio)}`, url}); return; } catch (er) { if (er && er.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(url); toast('Enlace copiado'); } catch { prompt('Copia este enlace:', url); }
 };
@@ -1340,7 +1371,7 @@ function addToCart(id, talla, color){
   const p = productos.find(x => x.id === id); if (!p || !talla) return;
   color = color || null;
   const ex = cart.find(i => i.id === id && i.talla === talla && (i.color || null) === color);
-  if (ex) ex.qty++; else cart.push({id, talla, color, qty:1, nombre:p.nombre, precio:Number(p.precio) || 0, img:fotosDe(p)[0]});
+  if (ex) ex.qty++; else cart.push({id, talla, color, qty:1, nombre:p.nombre, precio:Number(p.precio) || 0, img:fotosColor(p, color)[0]});
   saveCart(); toast(`Agregado: ${p.nombre} (talla ${talla}${color ? ', ' + color : ''})`);
   const c = $('#cartCount'); c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump');
 }
